@@ -1,4 +1,4 @@
 double one_variable_function(double x, double y) {
-    double z = (x*x*3 + y*y) / 10;
+    double z = (sin(x*y) + cos(y)) / 2 + sin(x)+100;
     return z;
 }

@@ -14,4 +14,11 @@ view_point rotation(double x, double y, double z, double theta, double pi) {
     return rotated_point;
 }
 
+view_point backtracking(double x, double y,double theta, double pi) {
+    view_point origin_point;
+    origin_point.x = -x * sin(theta) - cos(theta) * y / sin(pi);
+    origin_point.y = x * cos(theta) - sin(theta) * y / sin(pi);
+    return origin_point;
+}
+
 #endif //INC_3D_GRAPH_MODELING_BASIS_ROTATION_H

@@ -12,11 +12,11 @@ void function_view(sf::RenderWindow &window,
 ) {
     sf::Color custom = sf::Color(0, 0, 255, 100);
     double length = 0.1;
-
-    double x_start = view_center_x - 5;
-    double x_end = view_center_x + 5;
-    double y_start = view_center_y - 5;
-    double y_end = view_center_y + 5;
+    double range = 8;
+    double x_start = view_center_x - range;
+    double x_end = view_center_x + range;
+    double y_start = view_center_y - range;
+    double y_end = view_center_y + range;
 
     for (double x = x_start; x <= x_end; x += length) {
         for (double y = y_start; y <= y_end; y += length) {

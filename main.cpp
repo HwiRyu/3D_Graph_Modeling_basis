@@ -32,19 +32,28 @@ int main()
         return 1;
     }
     sf::VertexArray one(sf::LineStrip);
+    sf::VertexArray center_point(sf::LineStrip);
 
     sf::View graphView(sf::FloatRect(-width / 2, -height / 2, width, height));
     sf::View initial_View(sf::FloatRect(-width / 2, -height / 2, width, height));
 
     window.setView(graphView);
 
+    sf::Text text1("", font, 12);
+    text1.setFillColor(sf::Color::Black);
+
+
     double size = 30;
     double x_angle = -10;
-    double y_angle = 5;
+    double y_angle = 5.5;
     const double Pi = 3.14159265358979;
     bool domain_fixed = true;
     double current_center_x;
     double current_center_y;
+    double pi = Pi * y_angle / 120;      //라디안 값
+    double theta = Pi * (x_angle / 120);
+    int delta_size = 5;
+
 
 
     sf::Clock clock;
@@ -74,24 +83,25 @@ int main()
                     case sf::Keyboard::Right:
                         x_angle -= 1;
                         break;
-                    case sf::Keyboard::F:
-                        if (domain_fixed)
-                            domain_fixed = false;
-                        else
-                            domain_fixed = true;
-                        break;
                     case sf::Keyboard::W:
-                        size += 5;
+
+                        graphView.move(sf::Vector2f ((graphView.getCenter().x/size) * delta_size, (graphView.getCenter().y/size) * delta_size));
+                        size += delta_size;
+                        window.setView(graphView);
+
                         break;
                     case sf::Keyboard::S:
-                        size -= 5;
+                        graphView.move(sf::Vector2f ((-graphView.getCenter().x/size) * delta_size, (-graphView.getCenter().y/size) * delta_size));
+
+                        size -= delta_size;
+                        window.setView(graphView);
+
                         break;
                     default:
                         break;
                 }
                 size = (size < 5) ? 5 : ((size > 200.0) ? 200.0 : size);
             }
-
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     sf::Time currentTime = clock.getElapsedTime();
@@ -136,8 +146,10 @@ int main()
 
         double view_center_x = graphView.getCenter().x / (size);
         double view_center_y = -graphView.getCenter().y / (size);
-        double center_x = -view_center_x * sin(theta) - cos(theta) * view_center_y / sin(pi);
-        double center_y = view_center_x * cos(theta) - sin(theta) * view_center_y / sin(pi);
+        double center_x = backtracking(view_center_x, view_center_y, theta, pi).x;
+        double center_y = backtracking(view_center_x, view_center_y, theta, pi).y;
+
+
 
         if (0.005 * Pi < pi && pi < 1.995 * Pi) {
             current_center_x = center_x;
@@ -147,6 +159,19 @@ int main()
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         function_view(window, one, size, one_variable_function, current_center_x,current_center_y, theta, pi);
         zero_plane(window, one, size, current_center_x,current_center_y, theta, pi);
+
+
+        ////////////////////////////////////////////////////////////
+        text1.setString("x:" + std::to_string(center_x)+ "y" + std::to_string(center_y));
+
+        text1.setPosition(graphView.getCenter().x + 450, graphView.getCenter().y - 366);
+        window.draw(text1);
+
+        sf::CircleShape circle(5.0); // Create a circle with radius 3 (adjust as needed)
+        circle.setFillColor(sf::Color::Red);
+        circle.setPosition(sf::Vector2f(graphView.getCenter().x-circle.getRadius(),graphView.getCenter().y-circle.getRadius())); // Set position based on scaled coordinates
+
+        window.draw(circle);
         window.display();
 
     }
