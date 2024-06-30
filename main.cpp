@@ -17,13 +17,11 @@
 #include "axes.h"
 
 
-
 const int width = 1500;
 const int height = 800;
 
 
-int main()
-{
+int main() {
     sf::RenderWindow window(sf::VideoMode(width, height), "Basis");
 
     sf::Font font;
@@ -32,7 +30,6 @@ int main()
         return 1;
     }
     sf::VertexArray one(sf::LineStrip);
-    sf::VertexArray center_point(sf::LineStrip);
 
     sf::View graphView(sf::FloatRect(-width / 2, -height / 2, width, height));
     sf::View initial_View(sf::FloatRect(-width / 2, -height / 2, width, height));
@@ -55,7 +52,6 @@ int main()
     int delta_size = 5;
 
 
-
     sf::Clock clock;
     sf::Clock clock_t;
 
@@ -63,11 +59,9 @@ int main()
     sf::Vector2i lastMousePos;
     sf::Vector2f startPoint;
 
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
 
             if (event.type == sf::Event::KeyPressed) {
                 switch (event.key.code) {
@@ -84,23 +78,28 @@ int main()
                         x_angle -= 1;
                         break;
                     case sf::Keyboard::W:
-
-                        graphView.move(sf::Vector2f ((graphView.getCenter().x/size) * delta_size, (graphView.getCenter().y/size) * delta_size));
-                        size += delta_size;
-                        window.setView(graphView);
-
+                        if (size <= 200) {
+                            graphView.move(sf::Vector2f((graphView.getCenter().x / size) * delta_size,
+                                                        (graphView.getCenter().y / size) * delta_size));
+                            size += delta_size;
+                            window.setView(graphView);
+                        }
                         break;
                     case sf::Keyboard::S:
-                        graphView.move(sf::Vector2f ((-graphView.getCenter().x/size) * delta_size, (-graphView.getCenter().y/size) * delta_size));
+                        if (size > 5) {
+                            graphView.move(sf::Vector2f((-graphView.getCenter().x / size) * delta_size,
+                                                        (-graphView.getCenter().y / size) * delta_size));
 
-                        size -= delta_size;
-                        window.setView(graphView);
-
+                            size -= delta_size;
+                            window.setView(graphView);
+                        }
                         break;
                     default:
                         break;
                 }
+/*
                 size = (size < 5) ? 5 : ((size > 200.0) ? 200.0 : size);
+*/
             }
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
@@ -150,28 +149,22 @@ int main()
         double center_y = backtracking(view_center_x, view_center_y, theta, pi).y;
 
 
-
         if (0.005 * Pi < pi && pi < 1.995 * Pi) {
             current_center_x = center_x;
             current_center_y = center_y;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        function_view(window, one, size, one_variable_function, current_center_x,current_center_y, theta, pi);
-        zero_plane(window, one, size, current_center_x,current_center_y, theta, pi);
+        function_view(window, one, size, one_variable_function, current_center_x, current_center_y, theta, pi);
+        zero_plane(window, one, size, current_center_x, current_center_y, theta, pi);
 
 
         ////////////////////////////////////////////////////////////
-        text1.setString("x:" + std::to_string(center_x)+ "y" + std::to_string(center_y));
+        text1.setString("x:" + std::to_string(center_x) + "y" + std::to_string(center_y));
 
         text1.setPosition(graphView.getCenter().x + 450, graphView.getCenter().y - 366);
         window.draw(text1);
 
-        sf::CircleShape circle(5.0); // Create a circle with radius 3 (adjust as needed)
-        circle.setFillColor(sf::Color::Red);
-        circle.setPosition(sf::Vector2f(graphView.getCenter().x-circle.getRadius(),graphView.getCenter().y-circle.getRadius())); // Set position based on scaled coordinates
-
-        window.draw(circle);
         window.display();
 
     }
