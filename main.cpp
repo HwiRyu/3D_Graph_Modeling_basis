@@ -5,6 +5,9 @@
 //4. metal을 사용한 gpu 가속
 //5. 시간 조정
 
+const int width = 1500;
+const int height = 800;
+
 
 #include <iostream>
 #include <vector>
@@ -15,10 +18,7 @@
 #include "function.h"
 #include "draw.h"
 #include "axes.h"
-
-
-const int width = 1500;
-const int height = 800;
+#include "fix.h"
 
 
 int main() {
@@ -50,6 +50,7 @@ int main() {
     double pi = Pi * y_angle / 120;      //라디안 값
     double theta = Pi * (x_angle / 120);
     int delta_size = 5;
+    double moving_epsilon = 0;
 
 
     sf::Clock clock;
@@ -60,6 +61,7 @@ int main() {
     sf::Vector2f startPoint;
 
     while (window.isOpen()) {
+
         sf::Event event;
         while (window.pollEvent(event)) {
 
@@ -97,16 +99,10 @@ int main() {
                     default:
                         break;
                 }
-/*
-                size = (size < 5) ? 5 : ((size > 200.0) ? 200.0 : size);
-*/
             }
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (event.mouseButton.button == sf::Mouse::Left) {
-                    sf::Time currentTime = clock.getElapsedTime();
                     lastMousePos = sf::Mouse::getPosition(window);
-                    startPoint = window.mapPixelToCoords(lastMousePos); // 초기 클릭 위치 저장
-                    lastClickTime = currentTime;
                 }
             }
 
@@ -127,8 +123,6 @@ int main() {
         }
 
         window.clear(sf::Color::White);
-        // Drawing code here
-
 
         // theta, pi에 관한 파트 ////////////////////////////////////////////////////////////////////////////////
         double pi = Pi * y_angle / 120;      //라디안 값
@@ -142,18 +136,21 @@ int main() {
         if (theta < 0) {
             theta += 2 * Pi;
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        point_fix(window,graphView, 0,0,0,  size, theta, pi);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         double view_center_x = graphView.getCenter().x / (size);
         double view_center_y = -graphView.getCenter().y / (size);
         double center_x = backtracking(view_center_x, view_center_y, theta, pi).x;
         double center_y = backtracking(view_center_x, view_center_y, theta, pi).y;
 
-
         if (0.005 * Pi < pi && pi < 1.995 * Pi) {
             current_center_x = center_x;
             current_center_y = center_y;
         }
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         function_view(window, one, size, one_variable_function, current_center_x, current_center_y, theta, pi);
         zero_plane(window, one, size, current_center_x, current_center_y, theta, pi);
